@@ -1,82 +1,55 @@
 from flask_sqlalchemy import SQLAlchemy
 
-# Initialize SQLAlchemy instance
+
 db = SQLAlchemy()
 
-# Define User model
+
 class UserModel(db.Model):
-    __tablename__ = "users"
-    
-    # Columns
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String, nullable=False)
-    last_name = db.Column(db.String, nullable=False)
-    email = db.Column(db.String, nullable=False, unique=True)
+    first_name = db.Column(db.String(255))
+    last_name = db.Column(db.String(255))
+    email = db.Column(db.String(255), unique=True)
+    phone = db.Column(db.Integer)
+    password = db.Column(db.String(255))
+    age = db.Column(db.Integer)
+    weight = db.Column(db.Integer)
+    gender = db.Column(db.String(10))
+    created_at = db.Column(db.TIMESTAMP, server_default= db.func.now())
 
-    # Timestamps
-    created_at = db.Column(db.TIMESTAMP, server_default=db.func.now())
-    updated_at = db.Column(db.TIMESTAMP, onupdate=db.func.now())
 
-
-# Define Workout model
 class WorkoutModel(db.Model):
-    __tablename__ = "workouts"
-    
-    # Columns
+    __tablename__ = 'workouts'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    users_id = db.Column(db.Integer, db.ForeignKey('users.id'))  
+    name = db.Column(db.String(255))
+    trainer = db.Column(db.String(255))
+    description = db.Column(db.String(255))
+    time = db.Column(db.String(255))
+    created_at = db.Column(db.TIMESTAMP, server_default= db.func.now())
+    # user = db.relationship('User', backref='workouts')
 
-    # Timestamp
-    created_at = db.Column(db.TIMESTAMP, server_default=db.func.now())
 
-# Define Review model
 class ReviewModel(db.Model):
-    __tablename__ = "reviews"
-    
-    # Columns
+    __tablename__ = 'reviews'
     id = db.Column(db.Integer, primary_key=True)
-    workout_id = db.Column(db.Integer, db.ForeignKey("workouts.id"), nullable=False)
+    workouts_id = db.Column(db.Integer, db.ForeignKey('workouts.id'))
+    title = db.Column(db.String(255))
+    body = db.Column(db.Text)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    status = db.Column(db.String(255))
+    created_at = db.Column(db.TIMESTAMP, server_default= db.func.now())
+   
+    # workout = db.relationship('Workout', backref='reviews')
+    # user = db.relationship('User', backref='reviews')
 
-    # Timestamp
-    created_at = db.Column(db.TIMESTAMP, server_default=db.func.now())
 
-# Define User_workout model
 class UserWorkoutModel(db.Model):
-    __tablename__ = "user_workouts"
-    
-    # Columns
+    __tablename__ = 'user_workouts'
     id = db.Column(db.Integer, primary_key=True)
-    workout_id = db.Column(db.Integer, db.ForeignKey("workouts.id"), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    created_at = db.Column(db.TIMESTAMP, server_default=db.func.now())
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    workout_id = db.Column(db.Integer, db.ForeignKey('workouts.id'))
+    created_at = db.Column(db.TIMESTAMP,server_default= db.func.now())
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 
-    
-    
-    
-    
-    
-            
-        
-        
-        
-        
-        
-        
-        
-    
-    
-    
-    
+
