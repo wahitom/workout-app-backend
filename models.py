@@ -16,6 +16,23 @@ class UserModel(db.Model):
     weight = db.Column(db.Integer)
     gender = db.Column(db.String(10))
     created_at = db.Column(db.TIMESTAMP, server_default= db.func.now())
+    # updated_at = db.Column(db.TIMESTAMP, server_default= db.func.now())
+
+    # def to_dict(self):
+
+    #     return [{
+            
+    #         "id": self.id,
+    #         "first_name": self.first_name,
+    #         "last_name" : self.last_name,
+    #         "email": self.email,
+    #         "phone" : self.phone,
+    #         "password" : self.password,
+    #         "age" : self.age,
+    #         "weight" : self.weight,
+    #         "gender" : self.gender,
+    #         "created_at" : self.created_at
+    #     }]
 
 
 class WorkoutModel(db.Model):
@@ -42,7 +59,7 @@ class ReviewModel(db.Model):
    
     # workout = db.relationship('Workout', backref='reviews')
     # user = db.relationship('User', backref='reviews')
-
+     
 
 class UserWorkoutModel(db.Model):
     __tablename__ = 'user_workouts'
