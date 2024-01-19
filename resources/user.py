@@ -1,5 +1,6 @@
 from models import UserModel,db
 from flask_restful import Resource, fields, marshal_with, reqparse
+from flask_bcrypt import generate_password_hash
 
 user_fields = {
     "id" : fields.Integer,
@@ -27,20 +28,32 @@ class User(Resource):
     user_parser.add_argument('weight', required=True, type=int, help="Enter weight")
     user_parser.add_argument('gender', required=True, type=str, help="Enter your gender")
 
-    @marshal_with(user_fields)
-    def get(self,id=None):
-        if id:
-            user = UserModel.query.filter_by(id=id).first()
-            return user
-        else:
-            users = UserModel.query.all()
-            return users
+    # @marshal_with(user_fields)
+    # def get(self,id=None):
+    #     if id:
+    #         user = UserModel.query.filter_by(id=id).first()
+    #         return user
+    #     else:
+    #         users = UserModel.query.all()
+    #         return users
         
     def post(self):
         user = User.user_parser.parse_args()
+
+        user['password'] = generate_password_hash(user['password'])
         # posting a new user using usermodel format
         new_user = UserModel(**user)
+        
+        email = UserModel.query.filter_by(email = user['email']).one_or_none()
 
+        if email:
+            return {"message": "Email already taken", "status": "fail"}, 400
+        
+        phone = UserModel.query.filter_by(phone = user['phone']).one_or_none()
+        
+        if phone:
+            return {"message": "phone number already taken", "status": "fail"}, 400
+        
         try:
             db.session.add(new_user)
             db.session.commit()
@@ -50,36 +63,36 @@ class User(Resource):
             return {"message": "Unable to create user"}
 
     
-    @marshal_with(user_fields)
-    def patch(self,id):
-        data =User.user_parser.parse_args()
-        user = UserModel.query.get(id)
+    # @marshal_with(user_fields)
+    # def patch(self,id):
+    #     data =User.user_parser.parse_args()
+    #     user = UserModel.query.get(id)
 
-        if user:
-            for key,value in data.items():
-                setattr(user,key,value)
-            try:
-                db.session.commit()
+    #     if user:
+    #         for key,value in data.items():
+    #             setattr(user,key,value)
+    #         try:
+    #             db.session.commit()
 
-                return {"message":"user updated successfully"}
-            except:
-                return {"message":"user unable to be updated"}
+    #             return {"message":"user updated successfully"}
+    #         except:
+    #             return {"message":"user unable to be updated"}
             
-        else:
-            return {"message":"user not found"}
+    #     else:
+    #         return {"message":"user not found"}
         
-    def delete(self,id):
-        user = UserModel.query.get(id)
-        if user:
-            try:
-                db.session.delete(user)
-                db.session.commit()
+    # def delete(self,id):
+    #     user = UserModel.query.get(id)
+    #     if user:
+    #         try:
+    #             db.session.delete(user)
+    #             db.session.commit()
 
-                return {"message":"user deleted"}
-            except:
-                return {"message":"user unable to be deleted"}
-        else:
-            return {"message":"user not found"}
+    #             return {"message":"user deleted"}
+    #         except:
+    #             return {"message":"user unable to be deleted"}
+    #     else:
+    #         return {"message":"user not found"}
 
 
         
