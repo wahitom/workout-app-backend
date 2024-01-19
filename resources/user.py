@@ -94,6 +94,23 @@ class User(Resource):
     #     else:
     #         return {"message":"user not found"}
 
-
-        
+class Login(Resource):
+     user_parser = reqparse.RequestParser()
+     user_parser.add_argument('email', required=True, type = str, help="Enter the email")
+     user_parser.add_argument('password', required=True, type=str, help="Enter password")   
     
+     def post(self):
+         data = Login.user_parser.parse_args()
+
+         user = UserModel.query.filter_by(email = data['email']).first()
+
+         if user:
+             checking_password = user.check_password(data['password'])
+             if checking_password:
+                 # dont forget access token and refresh token
+                 return {"message":"login successfull","status": "success"} ,200
+                 #"access_token": access_token, "refresh_token": refresh_token}, 200
+             else:
+                return {"message": "Invalid email/password", "status": "fail"}, 403
+         else:
+            return {"message": "Invalid email/password", "status": "fail"}, 403

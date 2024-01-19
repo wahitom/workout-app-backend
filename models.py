@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import check_password_hash
 
 
 db = SQLAlchemy()
@@ -7,7 +8,7 @@ db = SQLAlchemy()
 class UserModel(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(255))
+    first_name = db.Column(db.String(255)) # nullability 
     last_name = db.Column(db.String(255))
     email = db.Column(db.String(255), unique=True)
     phone = db.Column(db.Integer)
@@ -34,6 +35,9 @@ class UserModel(db.Model):
     #         "created_at" : self.created_at
     #     }]
 
+    def check_password(self, user_password):
+        return check_password_hash(self.password,user_password)
+      
 
 class WorkoutModel(db.Model):
     __tablename__ = 'workouts'
@@ -42,6 +46,7 @@ class WorkoutModel(db.Model):
     name = db.Column(db.String(255))
     trainer = db.Column(db.String(255))
     description = db.Column(db.String(255))
+    #image = db.Column(db.String)
     time = db.Column(db.String(255))
     created_at = db.Column(db.TIMESTAMP, server_default= db.func.now())
     # user = db.relationship('User', backref='workouts')

@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_migrate import Migrate 
 from flask_restful import Api, Resource
-from resources.user import User
+from resources.user import User,Login
 from resources.workout import Workout
 from resources.reviews import Review
 from resources.user_workouts import UserWorkout
@@ -26,6 +26,7 @@ api.add_resource(User, '/users', '/users/<int:id>')
 api.add_resource(Workout, '/workouts', '/workouts/<int:id>')
 api.add_resource(Review, '/reviews', '/reviews/<int:id>')
 api.add_resource(UserWorkout, '/userworkouts', '/userworkouts/<int:id>')
+api.add_resource(Login, '/login')
 
 
 if __name__ == '__main__':

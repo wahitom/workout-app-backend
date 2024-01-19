@@ -11,7 +11,7 @@ workout_fields = {
     "created_at" : fields.DateTime
     
 }
-
+# jwt_required()
 class Workout(Resource):
     workout_parser = reqparse.RequestParser()
     workout_parser.add_argument('users_id', required = True,type=int,help="Users id is required" )
