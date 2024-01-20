@@ -2,6 +2,8 @@ from models import UserModel,db
 from flask_restful import Resource, fields, marshal_with, reqparse
 from flask_bcrypt import generate_password_hash
 
+from flask_jwt_extended import create_access_token, create_refresh_token
+
 user_fields = {
     "id" : fields.Integer,
     "first_name" : fields.String,
@@ -108,8 +110,13 @@ class Login(Resource):
              checking_password = user.check_password(data['password'])
              if checking_password:
                  # dont forget access token and refresh token
-                 return {"message":"login successfull","status": "success"} ,200
-                 #"access_token": access_token, "refresh_token": refresh_token}, 200
+                user_json = user.to_json()
+                access_token = create_access_token(identity=user_json['id'])
+                refresh_token = create_refresh_token(identity=user_json['id'])
+                return {"message": "Login successful", "status": "success",
+                        "access_token": access_token, "refresh_token": refresh_token}, 200
+             
+
              else:
                 return {"message": "Invalid email/password", "status": "fail"}, 403
          else:

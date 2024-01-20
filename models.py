@@ -37,6 +37,10 @@ class UserModel(db.Model):
 
     def check_password(self, user_password):
         return check_password_hash(self.password,user_password)
+    
+    #  logic for the access token 
+    def to_json(self):
+        return {"id": self.id}
       
 
 class WorkoutModel(db.Model):
