@@ -8,14 +8,15 @@ db = SQLAlchemy()
 class UserModel(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(255)) # nullability 
-    last_name = db.Column(db.String(255))
-    email = db.Column(db.String(255), unique=True)
-    phone = db.Column(db.Integer)
-    password = db.Column(db.String(255))
-    age = db.Column(db.Integer)
-    weight = db.Column(db.Integer)
-    gender = db.Column(db.String(10))
+    first_name = db.Column(db.String(255),  nullable = False) # nullability 
+    last_name = db.Column(db.String(255),  nullable = False)
+    email = db.Column(db.String(255), unique=True,  nullable = False)
+    phone = db.Column(db.Integer, nullable = False)
+    password = db.Column(db.String(255),  nullable = False)
+    age = db.Column(db.Integer,  nullable = False)
+    weight = db.Column(db.Integer, nullable = False)
+    gender = db.Column(db.String(10), nullable = False)
+    role = db.Column(db.String, nullable = False)
     created_at = db.Column(db.TIMESTAMP, server_default= db.func.now())
     # updated_at = db.Column(db.TIMESTAMP, server_default= db.func.now())
 
@@ -40,18 +41,18 @@ class UserModel(db.Model):
     
     #  logic for the access token 
     def to_json(self):
-        return {"id": self.id}
+        return {"id": self.id, "role": self.role}
       
 
 class WorkoutModel(db.Model):
     __tablename__ = 'workouts'
     id = db.Column(db.Integer, primary_key=True)
-    users_id = db.Column(db.Integer, db.ForeignKey('users.id'))  
-    name = db.Column(db.String(255))
-    trainer = db.Column(db.String(255))
-    description = db.Column(db.String(255))
+    users_id = db.Column(db.Integer, db.ForeignKey('users.id'),  nullable = False)
+    name = db.Column(db.String(255), nullable = False)
+    trainer = db.Column(db.String(255), nullable = False)
+    description = db.Column(db.String(255), nullable = False)
     #image = db.Column(db.String)
-    time = db.Column(db.String(255))
+    time = db.Column(db.String(255), nullable = False)
     created_at = db.Column(db.TIMESTAMP, server_default= db.func.now())
     # user = db.relationship('User', backref='workouts')
 
@@ -59,11 +60,11 @@ class WorkoutModel(db.Model):
 class ReviewModel(db.Model):
     __tablename__ = 'reviews'
     id = db.Column(db.Integer, primary_key=True)
-    workouts_id = db.Column(db.Integer, db.ForeignKey('workouts.id'))
-    title = db.Column(db.String(255))
-    body = db.Column(db.Text)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    status = db.Column(db.String(255))
+    workouts_id = db.Column(db.Integer, db.ForeignKey('workouts.id'), nullable = False)
+    title = db.Column(db.String(255), nullable = False)
+    body = db.Column(db.Text, nullable = False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'),  nullable = False)
+    status = db.Column(db.String(255),  nullable = False)
     created_at = db.Column(db.TIMESTAMP, server_default= db.func.now())
    
     # workout = db.relationship('Workout', backref='reviews')
@@ -73,9 +74,7 @@ class ReviewModel(db.Model):
 class UserWorkoutModel(db.Model):
     __tablename__ = 'user_workouts'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    workout_id = db.Column(db.Integer, db.ForeignKey('workouts.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'),  nullable = False)
+    workout_id = db.Column(db.Integer, db.ForeignKey('workouts.id'),  nullable = False)
     created_at = db.Column(db.TIMESTAMP,server_default= db.func.now())
-
-
 
