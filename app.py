@@ -5,6 +5,7 @@ from resources.user import User,Login
 from resources.workout import Workout
 from resources.reviews import Review
 from resources.user_workouts import UserWorkout
+from resources.announcements import Announcement
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flask_jwt_extended import JWTManager
@@ -33,6 +34,7 @@ api.add_resource(Workout, '/workouts', '/workouts/<int:id>')
 api.add_resource(Review, '/reviews', '/reviews/<int:id>')
 api.add_resource(UserWorkout, '/userworkouts', '/userworkouts/<int:id>')
 api.add_resource(Login, '/login')
+api.add_resource(Announcement , '/announcements','/announcements/<int:id>')
 
 
 if __name__ == '__main__':

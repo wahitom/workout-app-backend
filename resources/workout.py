@@ -1,5 +1,5 @@
 from models import WorkoutModel, db
-from flask_restful import Resource,fields, marshal_with, reqparse
+from flask_restful import Resource,fields, marshal_with, reqparse, marshal
 
 workout_fields = {
     "id" : fields.Integer,
@@ -20,14 +20,15 @@ class Workout(Resource):
     workout_parser.add_argument('description', required = True,help="Description is required" )
     workout_parser.add_argument('time', required = True,help="Time is required" )
 
-    @marshal_with(workout_fields)
     def get(self,id=None):
         if id:
             workout = WorkoutModel.query.filter_by(id=id).first()
-            return workout
+            if workout == None:
+               return {"message":"workout not found"}, 404
+            return marshal(workout, workout_fields)
         else:
             workouts = WorkoutModel.query.all()
-            return workouts
+            return  marshal(workouts, workout_fields)
         
     def post(self):
         data = Workout.workout_parser.parse_args()

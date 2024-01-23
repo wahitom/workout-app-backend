@@ -18,7 +18,7 @@ class UserModel(db.Model):
     gender = db.Column(db.String(10), nullable = False)
     role = db.Column(db.String, nullable = False)
     created_at = db.Column(db.TIMESTAMP, server_default= db.func.now())
-    # updated_at = db.Column(db.TIMESTAMP, server_default= db.func.now())
+    updated_at = db.Column(db.TIMESTAMP, server_default= db.func.now())
 
     # def to_dict(self):
 
@@ -51,8 +51,9 @@ class WorkoutModel(db.Model):
     name = db.Column(db.String(255), nullable = False)
     trainer = db.Column(db.String(255), nullable = False)
     description = db.Column(db.String(255), nullable = False)
-    #image = db.Column(db.String)
+    image = db.Column(db.String, nullable=False)
     time = db.Column(db.String(255), nullable = False)
+    price = db.Column(db.String, nullable=False)
     created_at = db.Column(db.TIMESTAMP, server_default= db.func.now())
     # user = db.relationship('User', backref='workouts')
 
@@ -61,10 +62,10 @@ class ReviewModel(db.Model):
     __tablename__ = 'reviews'
     id = db.Column(db.Integer, primary_key=True)
     workouts_id = db.Column(db.Integer, db.ForeignKey('workouts.id'), nullable = False)
-    title = db.Column(db.String(255), nullable = False)
+    ratings = db.Column(db.String, nullable = False)
     body = db.Column(db.Text, nullable = False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'),  nullable = False)
-    status = db.Column(db.String(255),  nullable = False)
+    # status = db.Column(db.String(255),  nullable = False)
     created_at = db.Column(db.TIMESTAMP, server_default= db.func.now())
    
     # workout = db.relationship('Workout', backref='reviews')
@@ -78,3 +79,10 @@ class UserWorkoutModel(db.Model):
     workout_id = db.Column(db.Integer, db.ForeignKey('workouts.id'),  nullable = False)
     created_at = db.Column(db.TIMESTAMP,server_default= db.func.now())
 
+class AnnouncementModel(db.Model):
+    __tablename__ = 'announcements'
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String ,nullable = False)
+    image = db.Column(db.String, nullable = False)
+    description = db.Column(db.String, nullable = False)

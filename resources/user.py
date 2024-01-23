@@ -14,6 +14,7 @@ user_fields = {
     "age" : fields.Integer,
     "weight": fields.Integer,
     "gender" : fields.String,
+    "role": fields.String,
     "created_at" : fields.DateTime
 }
 
@@ -29,6 +30,7 @@ class User(Resource):
     user_parser.add_argument('age', required=True, type=int, help="Enter your age")
     user_parser.add_argument('weight', required=True, type=int, help="Enter weight")
     user_parser.add_argument('gender', required=True, type=str, help="Enter your gender")
+    user_parser.add_argument('role', required=True, type=str, help="Enter your role")
 
     # @marshal_with(user_fields)
     # def get(self,id=None):
@@ -76,7 +78,6 @@ class User(Resource):
                    "user": user_json
                    }, 201 
 
-            return {"message": "User added successfully"}
         except:
             return {"message": "Unable to create user"}
 
