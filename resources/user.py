@@ -60,6 +60,22 @@ class User(Resource):
             db.session.add(new_user)
             db.session.commit()
 
+            # get user from db after saving 
+            db.session.refresh(user)
+
+            user_json = user.to_json()
+            access_token = create_access_token(identity=user_json['id'])
+            refresh_token = create_refresh_token(identity=user_json['id'])
+
+             # return user object if this process was succesful
+            # add access and refresh tokens so that they can be linked with our react app
+            return{"message": "Account created successfully", 
+                   "status": "success", 
+                   "access_token": access_token, 
+                   "refresh_token": refresh_token,
+                   "user": user_json
+                   }, 201 
+
             return {"message": "User added successfully"}
         except:
             return {"message": "Unable to create user"}
@@ -113,8 +129,12 @@ class Login(Resource):
                 user_json = user.to_json()
                 access_token = create_access_token(identity=user_json['id'])
                 refresh_token = create_refresh_token(identity=user_json['id'])
-                return {"message": "Login successful", "status": "success",
-                        "access_token": access_token, "refresh_token": refresh_token}, 200
+                return {"message": "Login successful", 
+                        "status": "success",
+                        "access_token": access_token,
+                        "refresh_token": refresh_token,
+                        "user": user_json
+                        }, 200
              
 
              else:

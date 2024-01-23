@@ -10,7 +10,8 @@ users = [{
   "password": "aQ9&s?\"H+Jq",
   "age": 18,
   "weight": 81,
-  "gender": "Female"
+  "gender": "Female",
+  "role": "member"
 }, {
   "id": 2,
   "first_name": "Dean",
@@ -20,7 +21,8 @@ users = [{
   "password": "jP2+(a,H*n)!tS",
   "age": 35,
   "weight": 74,
-  "gender": "Male"
+  "gender": "Male",
+  "role": "member"
 }, {
   "id": 3,
   "first_name": "Kain",
@@ -30,7 +32,8 @@ users = [{
   "password": "rB2{8=nIN(4_O",
   "age": 19,
   "weight": 51,
-  "gender": "Male"
+  "gender": "Male",
+  "role": "member"
 }, {
   "id": 4,
   "first_name": "Thorpe",
@@ -40,7 +43,8 @@ users = [{
   "password": "uB9\"@'`_rs",
   "age": 19,
   "weight": 100,
-  "gender": "Male"
+  "gender": "Male",
+  "role": "member"
 }, {
   "id": 5,
   "first_name": "Fayina",
@@ -50,7 +54,8 @@ users = [{
   "password": "sQ9%?uqwI2",
   "age": 28,
   "weight": 92,
-  "gender": "Female"
+  "gender": "Female",
+  "role": "member"
 }]
 
 workouts = [{
@@ -151,17 +156,17 @@ user_workouts = [{
 
 
 
-# with app.app_context():
-#     db.session.add_all(UserModel(**user) for user in users)
-#     db.session.commit()
+with app.app_context():
+    db.session.add_all(UserModel(**user) for user in users)
+    db.session.commit()
 
-# with app.app_context():
-#     db.session.add_all(WorkoutModel(**workout) for workout in workouts)
-#     db.session.commit()
+with app.app_context():
+    db.session.add_all(WorkoutModel(**workout) for workout in workouts)
+    db.session.commit()
 
-# with app.app_context():
-#     db.session.add_all(ReviewModel(**review) for review in reviews)
-#     db.session.commit()
+with app.app_context():
+    db.session.add_all(ReviewModel(**review) for review in reviews)
+    db.session.commit()
 
 with app.app_context():
     db.session.add_all(UserWorkoutModel(**user_workout) for user_workout in user_workouts)
