@@ -57,7 +57,8 @@ class WorkoutModel(db.Model):
     time = db.Column(db.String(255), nullable = False)
     price = db.Column(db.String, nullable=False)
     created_at = db.Column(db.TIMESTAMP, server_default= db.func.now())
-    # user = db.relationship('User', backref='workouts')
+    # user = db.relationship('User', backref='workouts') 
+    #  user relationship is commented out 
 
 
 class ReviewModel(db.Model):
