@@ -1,5 +1,5 @@
 from app import app
-from models import db,UserModel, WorkoutModel,ReviewModel, UserWorkoutModel
+from models import db,UserModel, WorkoutModel,ReviewModel, UserWorkoutModel ,AnnouncementModelg
 
 users = [{
   "id": 1,
@@ -153,7 +153,16 @@ user_workouts = [{
   "user_id": 5,
   "workout_id": 5
 }]
-
+announcements=[{"id":1,"title":"Bupropion Hydrochloride","image":"Apt 482","description":"Rifampin"},
+{"id":2,"title":"Salicylic Acid","image":"6th Floor","description":"Diabenex HP"},
+{"id":3,"title":"Aureobasidium pullulans","image":"PO Box 83385","description":"NOEVIR 5 TREATMENT LIQUID FOUNDATION LX"},
+{"id":4,"title":"PREPARATION H","image":"Suite 31","description":"OXYGEN"},
+{"id":5,"title":"PERCOCET","image":"PO Box 62868","description":"Procainamide Hydrochloride"},
+{"id":6,"title":"Cyclobenzaprine Hydrochloride","image":"PO Box 39543","description":"Ibuprofen"},
+{"id":7,"title":"Quetiapine fumarate","image":"18th Floor","description":"Oyster"},
+{"id":8,"title":"Naproxen Sodium","image":"Apt 137","description":"BUDEPRION"},
+{"id":9,"title":"PROVENCE TWO WAY PACT","image":"Room 1357","description":"Medicated Pain Relief"},
+{"id":10,"title":"Cyclobenzaprine Hydrochloride","image":"PO Box 48084","description":"Acyclovir Sodium"}]
 
 
 with app.app_context():
@@ -171,3 +180,7 @@ with app.app_context():
 with app.app_context():
     db.session.add_all(UserWorkoutModel(**user_workout) for user_workout in user_workouts)
     db.session.commit()
+
+with app.app_context():
+    db.session.add_all(AnnouncementModel(**announcements)for announcement in announcements)
+    db.session.commit()     
