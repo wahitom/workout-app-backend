@@ -14,7 +14,7 @@ class UserWorkout(Resource):
     userworkout_parser.add_argument('user_id', required = True,type=int,help="Users id is required" )
     userworkout_parser.add_argument('workout_id', required = True,type=int,help="workout id is required" )
     
-
+    #should get data of the user who is currently logged in and wants to see the workout he/she is currentry enrolled in
     @marshal_with(userWorkout_fields)
     def get(self,id=None):
         if id:
@@ -24,6 +24,7 @@ class UserWorkout(Resource):
             userworkouts = UserWorkoutModel.query.all()
             return userworkouts
         
+    #it will be posted to the profile page once a user books it     
     def post(self):
         data = UserWorkout.userworkout_parser.parse_args()
 
@@ -54,7 +55,8 @@ class UserWorkout(Resource):
             
         else:
             return {"message":"userworkout not found"}
-        
+    #once a user is finallly fit or satisfied with the exercise he/she can delete the workout from his profile
+        # or once he/she is done with the classes 
     def delete(self,id):
         userworkout = UserWorkoutModel.query.get(id)
         if userworkout:

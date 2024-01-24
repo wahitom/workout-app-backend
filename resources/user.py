@@ -32,14 +32,14 @@ class User(Resource):
     user_parser.add_argument('gender', required=True, type=str, help="Enter your gender")
     user_parser.add_argument('role', required=True, type=str, help="Enter your role")
 
-    # @marshal_with(user_fields)
-    # def get(self,id=None):
-    #     if id:
-    #         user = UserModel.query.filter_by(id=id).first()
-    #         return user
-    #     else:
-    #         users = UserModel.query.all()
-    #         return users
+    @marshal_with(user_fields)
+    def get(self,id=None):
+        if id:
+            user = UserModel.query.filter_by(id=id).first()
+            return user
+        else:
+            users = UserModel.query.all()
+            return users
         
     def post(self):
         user = User.user_parser.parse_args()
@@ -62,7 +62,8 @@ class User(Resource):
             db.session.add(new_user)
             db.session.commit()
 
-            # get user from db after saving 
+            #return {"message":"user added succesfully","status":"success"}, 200
+            #get user from db after saving 
             db.session.refresh(user)
 
             user_json = user.to_json()
@@ -77,6 +78,7 @@ class User(Resource):
                    "refresh_token": refresh_token,
                    "user": user_json
                    }, 201 
+
 
         except:
             return {"message": "Unable to create user"}

@@ -1,5 +1,5 @@
 from models import WorkoutModel, db
-from flask_restful import Resource,fields, marshal_with, reqparse, marshal
+from flask_restful import Resource,fields, marshal, reqparse, marshal
 
 workout_fields = {
     "id" : fields.Integer,
@@ -7,6 +7,7 @@ workout_fields = {
     "name" : fields.String,
     "trainer" : fields.String,
     "description" : fields.String,
+    "image":fields.String,
     "time" : fields.String,
     "created_at" : fields.DateTime
     
@@ -14,12 +15,14 @@ workout_fields = {
 # jwt_required()
 class Workout(Resource):
     workout_parser = reqparse.RequestParser()
-    workout_parser.add_argument('users_id', required = True,type=int,help="Users id is required" )
+    #workout_parser.add_argument('users_id', required = True,type=int,help="Users id is required" )
     workout_parser.add_argument('name', required = True,help="Name is required" )
     workout_parser.add_argument('trainer', required = True,help="Trainer is required" )
     workout_parser.add_argument('description', required = True,help="Description is required" )
+    workout_parser.add_argument('image', required = True,help="Image is required" )
     workout_parser.add_argument('time', required = True,help="Time is required" )
-
+    workout_parser.add_argument('price', required = True,help="price is required" )
+   
     def get(self,id=None):
         if id:
             workout = WorkoutModel.query.filter_by(id=id).first()
@@ -43,7 +46,7 @@ class Workout(Resource):
         except:
             return {"message" : "unable to create workout"}
         
-    @marshal_with(workout_fields)
+
     def patch(self,id):
         data = Workout.workout_parser.parse_args()
         workout = WorkoutModel.query.get(id)

@@ -7,18 +7,18 @@ review_fields = {
     "user_id" : fields.Integer,
     "title" : fields.String,
     "body" : fields.String,
-    "status" : fields.String,
+    #"status" : fields.String,
     "created_at" : fields.DateTime
     
 }
-
+    # who can make a review ?
 class Review(Resource):
     review_parser = reqparse.RequestParser()
     review_parser.add_argument('workouts_id', required = True,type=int,help="Workouts id is required" )
     review_parser.add_argument('user_id', required = True,type=int,help="User id is required")
-    review_parser.add_argument('title', required = True,help="Title is required" )
+    review_parser.add_argument('ratings', required = True,help="Rating is required" )
     review_parser.add_argument('body', required = True,help="Body is required" )
-    review_parser.add_argument('status', required = True,help="Description is required" )
+    #review_parser.add_argument('status', required = True,help="Description is required" )
 
     @marshal_with(review_fields)
     def get(self,id=None):

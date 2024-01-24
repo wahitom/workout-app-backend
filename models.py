@@ -47,7 +47,9 @@ class UserModel(db.Model):
 class WorkoutModel(db.Model):
     __tablename__ = 'workouts'
     id = db.Column(db.Integer, primary_key=True)
-    users_id = db.Column(db.Integer, db.ForeignKey('users.id'),  nullable = False)
+    # was thinking about its importance here User_id and didnt see any 
+    # a workout should be associated to a user only when he/she books it
+    # users_id = db.Column(db.Integer, db.ForeignKey('users.id'),  nullable = False)
     name = db.Column(db.String(255), nullable = False)
     trainer = db.Column(db.String(255), nullable = False)
     description = db.Column(db.String(255), nullable = False)
@@ -68,8 +70,8 @@ class ReviewModel(db.Model):
     # status = db.Column(db.String(255),  nullable = False)
     created_at = db.Column(db.TIMESTAMP, server_default= db.func.now())
    
-    # workout = db.relationship('Workout', backref='reviews')
-    # user = db.relationship('User', backref='reviews')
+    workout = db.relationship('Workout', backref='reviews')
+    user = db.relationship('User', backref='reviews')
      
 
 class UserWorkoutModel(db.Model):
@@ -78,6 +80,9 @@ class UserWorkoutModel(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'),  nullable = False)
     workout_id = db.Column(db.Integer, db.ForeignKey('workouts.id'),  nullable = False)
     created_at = db.Column(db.TIMESTAMP,server_default= db.func.now())
+
+    #user = db.relationship('UserModel', back_populates='workouts')
+    #workout = db.relationship('WorkoutModel', back_populates='users')
 
 class AnnouncementModel(db.Model):
     __tablename__ = 'announcements'
