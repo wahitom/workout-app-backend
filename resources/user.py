@@ -4,6 +4,8 @@ from flask_bcrypt import generate_password_hash
 
 from flask_jwt_extended import create_access_token, create_refresh_token
 
+from .workout import workout_fields
+
 user_fields = {
     "id" : fields.Integer,
     "first_name" : fields.String,
@@ -14,6 +16,7 @@ user_fields = {
     "age" : fields.Integer,
     "weight": fields.Integer,
     "gender" : fields.String,
+    "user_workouts": fields.Nested(workout_fields),
     "role": fields.String,
     "created_at" : fields.DateTime
 }
