@@ -1,6 +1,7 @@
 from models import UserWorkoutModel, db
 from flask_restful import Resource,fields, marshal_with, reqparse
 
+# Define fields for marshaling responses
 userWorkout_fields = {
     "id" : fields.Integer,
     "user_id" : fields.Integer,
@@ -9,12 +10,13 @@ userWorkout_fields = {
     
 }
 
+# Request parser for handling user workout data in requests
 class UserWorkout(Resource):
     userworkout_parser = reqparse.RequestParser()
     userworkout_parser.add_argument('user_id', required = True,type=int,help="Users id is required" )
     userworkout_parser.add_argument('workout_id', required = True,type=int,help="workout id is required" )
     
-
+#Retrieve user workout(s) based on the provided ID.
     @marshal_with(userWorkout_fields)
     def get(self,id=None):
         if id:
@@ -24,6 +26,7 @@ class UserWorkout(Resource):
             userworkouts = UserWorkoutModel.query.all()
             return userworkouts
         
+   # Create a new user workout record.
     def post(self):
         data = UserWorkout.userworkout_parser.parse_args()
 
@@ -37,6 +40,7 @@ class UserWorkout(Resource):
         except:
             return {"message" : "unable to create userworkout"}
         
+    #Update user workout information based on the provided ID
     @marshal_with(userWorkout_fields)
     def patch(self,id):
         data = UserWorkout.userworkout_parser.parse_args()
@@ -54,7 +58,8 @@ class UserWorkout(Resource):
             
         else:
             return {"message":"userworkout not found"}
-        
+     
+     #Delete a user workout record based on the provided ID.   
     def delete(self,id):
         userworkout = UserWorkoutModel.query.get(id)
         if userworkout:
