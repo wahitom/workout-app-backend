@@ -8,11 +8,12 @@ from resources.user_workouts import UserWorkout
 from resources.announcements import Announcement
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
-from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 
 from models import db, WorkoutModel, UserModel, ReviewModel, UserWorkoutModel
 
 app = Flask(__name__)
+CORS(app)
 
 api = Api(app)
 bcrypt = Bcrypt(app)
@@ -29,6 +30,12 @@ db.init_app(app)
 # initialize jwt
 jwt = JWTManager(app)
 
+# Get the current user from jwt 
+@jwt.user_lookup_loader
+def user_lookup_callback(_jwt_header, jwt_data):
+    identity = jwt_data["sub"]
+    return UserModel.query.filter_by(id=identity).one_or_none().to_json()
+
 api.add_resource(User, '/users', '/users/<int:id>')
 api.add_resource(Workout, '/workouts', '/workouts/<int:id>')
 api.add_resource(Review, '/reviews', '/reviews/<int:id>')
@@ -38,5 +45,5 @@ api.add_resource(Announcement , '/announcements','/announcements/<int:id>')
 
 
 if __name__ == '__main__':
-    app.run(port = 5555, debug=True)
+    app.run(port = 5000, debug=True)
     

@@ -1,5 +1,6 @@
 from models import WorkoutModel, db
-from flask_restful import Resource,fields, marshal_with, reqparse, marshal
+from flask_restful import Resource,fields, marshal, reqparse, marshal
+from flask_jwt_extended import current_user, jwt_required
 
 workout_fields = {
     "id" : fields.Integer,
@@ -7,6 +8,7 @@ workout_fields = {
     "name" : fields.String,
     "trainer" : fields.String,
     "description" : fields.String,
+    "image":fields.String,
     "time" : fields.String,
     "created_at" : fields.DateTime
     
@@ -18,8 +20,10 @@ class Workout(Resource):
     workout_parser.add_argument('name', required = True,help="Name is required" )
     workout_parser.add_argument('trainer', required = True,help="Trainer is required" )
     workout_parser.add_argument('description', required = True,help="Description is required" )
+    workout_parser.add_argument('image', required = True,help="Image is required" )
     workout_parser.add_argument('time', required = True,help="Time is required" )
-
+    workout_parser.add_argument('price', required = True,help="price is required" )
+   
     def get(self,id=None):
         if id:
             workout = WorkoutModel.query.filter_by(id=id).first()
@@ -29,11 +33,17 @@ class Workout(Resource):
         else:
             workouts = WorkoutModel.query.all()
             return  marshal(workouts, workout_fields)
-        
+
+    @jwt_required()  
     def post(self):
+        # print(current_user)
+        if current_user['role'] != 'admin':
+            return {"message": "Unauthorized request", "status": "fail"}, 403
+        
         data = Workout.workout_parser.parse_args()
 
         workout = WorkoutModel(**data)
+
 
         try:
             db.session.add(workout)
@@ -43,7 +53,7 @@ class Workout(Resource):
         except:
             return {"message" : "unable to create workout"}
         
-    @marshal_with(workout_fields)
+
     def patch(self,id):
         data = Workout.workout_parser.parse_args()
         workout = WorkoutModel.query.get(id)
@@ -61,7 +71,12 @@ class Workout(Resource):
         else:
             return {"message":"workout not found"}
         
+
+    @jwt_required() 
     def delete(self,id):
+        if current_user['role'] != 'admin':
+            return {"message": "Unauthorized request", "status": "fail"}, 403
+        
         workout = WorkoutModel.query.get(id)
         if workout:
             try:
