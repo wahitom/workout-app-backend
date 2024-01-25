@@ -1,6 +1,8 @@
+# Importing necessary modules and objects from your application
 from app import app
 from models import db,UserModel, WorkoutModel,ReviewModel, UserWorkoutModel
 
+# Data for users, workouts, reviews, and user_workouts
 users = [{
   "id": 1,
   "first_name": "Wanda",
@@ -155,19 +157,22 @@ user_workouts = [{
 }]
 
 
-
+# Adding users to the database
 with app.app_context():
     db.session.add_all(UserModel(**user) for user in users)
     db.session.commit()
 
+# Adding workouts to the database
 with app.app_context():
     db.session.add_all(WorkoutModel(**workout) for workout in workouts)
     db.session.commit()
 
+# Adding reviews to the database
 with app.app_context():
     db.session.add_all(ReviewModel(**review) for review in reviews)
     db.session.commit()
 
+# Adding user_workouts to the database
 with app.app_context():
     db.session.add_all(UserWorkoutModel(**user_workout) for user_workout in user_workouts)
     db.session.commit()
