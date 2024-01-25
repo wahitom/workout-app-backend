@@ -4,6 +4,7 @@ from flask_bcrypt import generate_password_hash
 
 from flask_jwt_extended import create_access_token, create_refresh_token
 
+# Define fields for marshaling responses
 user_fields = {
     "id" : fields.Integer,
     "first_name" : fields.String,
@@ -40,7 +41,8 @@ class User(Resource):
     #     else:
     #         users = UserModel.query.all()
     #         return users
-        
+     
+     # Parse user data from request   
     def post(self):
         user = User.user_parser.parse_args()
 
@@ -51,6 +53,7 @@ class User(Resource):
         email = UserModel.query.filter_by(email = user['email']).one_or_none()
 
         if email:
+            # Check if email or phone number is already taken
             return {"message": "Email already taken", "status": "fail"}, 400
         
         phone = UserModel.query.filter_by(phone = user['phone']).one_or_none()
@@ -59,12 +62,14 @@ class User(Resource):
             return {"message": "phone number already taken", "status": "fail"}, 400
         
         try:
+            # Save the new user to the database
             db.session.add(new_user)
             db.session.commit()
 
             # get user from db after saving 
             db.session.refresh(user)
 
+# Generate access and refresh tokens for the new user
             user_json = user.to_json()
             access_token = create_access_token(identity=user_json['id'])
             refresh_token = create_refresh_token(identity=user_json['id'])
@@ -118,11 +123,14 @@ class Login(Resource):
      user_parser.add_argument('email', required=True, type = str, help="Enter the email")
      user_parser.add_argument('password', required=True, type=str, help="Enter password")   
     
+     # Parse login data from request
      def post(self):
          data = Login.user_parser.parse_args()
 
+        # Query the database for the user with the provided email
          user = UserModel.query.filter_by(email = data['email']).first()
 
+        # Check if the provided password matches the stored hashed password
          if user:
              checking_password = user.check_password(data['password'])
              if checking_password:
@@ -137,8 +145,10 @@ class Login(Resource):
                         "user": user_json
                         }, 200
              
-
+    
              else:
+                 # Invalid password
                 return {"message": "Invalid email/password", "status": "fail"}, 403
          else:
+             # User not found with the provided email
             return {"message": "Invalid email/password", "status": "fail"}, 403
