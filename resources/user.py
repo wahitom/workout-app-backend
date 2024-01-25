@@ -83,9 +83,8 @@ class User(Resource):
                    "user": user_json
                    }, 201 
 
-
         except:
-            return {"message": "Unable to create user"}
+            return #{"message": "Unable to create user"}
 
     
     # @marshal_with(user_fields)
