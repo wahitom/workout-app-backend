@@ -6,6 +6,7 @@ from flask_jwt_extended import create_access_token, create_refresh_token
 
 from .workout import workout_fields
 
+
 user_fields = {
     "id" : fields.Integer,
     "first_name" : fields.String,

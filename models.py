@@ -20,6 +20,8 @@ class UserModel(db.Model):
     created_at = db.Column(db.TIMESTAMP, server_default= db.func.now())
     updated_at = db.Column(db.TIMESTAMP, server_default= db.func.now())
 
+    workouts = db.relationship('UserWorkoutModel', back_populates='user')
+
     # def to_dict(self):
 
     #     return [{
@@ -58,8 +60,10 @@ class WorkoutModel(db.Model):
     price = db.Column(db.String, nullable=False)
     created_at = db.Column(db.TIMESTAMP, server_default= db.func.now())
 
+    # these are a users workout so user_id is important here
     user_workouts = db.relationship('UserModel', backref='user_workouts') 
-    #  user relationship is commented out 
+    users = db.relationship('UserWorkoutModel', back_populates='workout')
+   
 
 
 class ReviewModel(db.Model):
@@ -71,9 +75,10 @@ class ReviewModel(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'),  nullable = False)
     # status = db.Column(db.String(255),  nullable = False)
     created_at = db.Column(db.TIMESTAMP, server_default= db.func.now())
-   
-    #workout = db.relationship('Workout', backref='reviews')
-    #user = db.relationship('User', backref='reviews')
+  
+    #  this is for the relationships between reviews and users and workouts
+    workout = db.relationship('WorkoutModel', backref='reviews')  # Updated relationship name
+    user = db.relationship('UserModel', backref='reviews')  # Updated relationship name
     
 
 class UserWorkoutModel(db.Model):
@@ -83,9 +88,10 @@ class UserWorkoutModel(db.Model):
     workout_id = db.Column(db.Integer, db.ForeignKey('workouts.id'),  nullable = False)
     created_at = db.Column(db.TIMESTAMP,server_default= db.func.now())
 
-    #user = db.relationship('UserModel', back_populates='workouts')
-    #workout = db.relationship('WorkoutModel', back_populates='users')
-
+    # this is the relationship between users and workouts
+    user = db.relationship('UserModel', back_populates='workouts')
+    workout = db.relationship('WorkoutModel', back_populates='users')
+    
 class AnnouncementModel(db.Model):
     __tablename__ = 'announcements'
 
