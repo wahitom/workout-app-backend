@@ -14,21 +14,31 @@ from models import db, WorkoutModel, UserModel, ReviewModel, UserWorkoutModel
 
 app = Flask(__name__)
 
+# Initialize Flask-RESTful API
 api = Api(app)
+
+# Initialize Flask-Bcrypt for password hashing
 bcrypt = Bcrypt(app)
+
+# Initialize Flask-JWT-Extended for JSON Web Tokens
 jwt = JWTManager(app)
 
+# Set SQLite database URI and configure JWT secret key
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.config["JWT_SECRET_KEY"] = "super-secret" 
 
+# Initialize Flask-Migrate for database migrations
 migrations = Migrate(app,db)
+
+# Initialize Flask-SQLAlchemy
 db.init_app(app)
 
-# initialize jwt
+
 jwt = JWTManager(app)
 
+# Add resources (endpoints) to the API
 api.add_resource(User, '/users', '/users/<int:id>')
 api.add_resource(Workout, '/workouts', '/workouts/<int:id>')
 api.add_resource(Review, '/reviews', '/reviews/<int:id>')
@@ -37,6 +47,7 @@ api.add_resource(Login, '/login')
 api.add_resource(Announcement , '/announcements','/announcements/<int:id>')
 
 
+# Run the Flask application on port 5555 with debug mode enabled
 if __name__ == '__main__':
     app.run(port = 5555, debug=True)
     
