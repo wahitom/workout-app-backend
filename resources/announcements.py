@@ -2,7 +2,7 @@
 from flask_restful import Resource , reqparse ,fields, marshal , marshal_with
 from models import AnnouncementModel ,db
 
-
+# Define fields for marshaling responses
 response_fields = {
    "id":fields.Integer,
    "title": fields.String,
@@ -11,7 +11,7 @@ response_fields = {
    "date":fields.String
 }
 
-
+# Request parser for handling announcement data in requests
 class Announcement(Resource):
    
    anouncement_parse =  reqparse.RequestParser()
@@ -21,7 +21,7 @@ class Announcement(Resource):
    anouncement_parse.add_argument('date', required = True,type=str,help="date is required" )
 
 
- 
+ #Retrieve announcement(s) based on the provided ID.
    def get(self,id=None):
         if id:
             announcement = AnnouncementModel.query.filter_by(id=id).first()
@@ -32,7 +32,7 @@ class Announcement(Resource):
             announcements = AnnouncementModel.query.all()
             return  marshal(announcements, response_fields)
 
-
+    # Create a new announcement.
    def post(self):
        data = Announcement.anouncement_parse.parse_args()
 
@@ -49,7 +49,7 @@ class Announcement(Resource):
        except:
             return {"message" : "unable to create Announcement"}
        
-   
+   #Update announcement information based on the provided ID.
    def patch(self,id):
         data = Announcement.anouncement_parse.parse_args()
         announcement = AnnouncementModel.query.get(id)
@@ -67,7 +67,8 @@ class Announcement(Resource):
                 return {"message":"unable to be update announcement"}
         else:
             return {"message":"announcement not found"}
-       
+     
+     #Delete an announcement based on the provided ID.  
    def delete(self,id):
         announcement = AnnouncementModel.query.get(id)
         if announcement:
