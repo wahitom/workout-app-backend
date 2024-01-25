@@ -8,10 +8,12 @@ from resources.user_workouts import UserWorkout
 from resources.announcements import Announcement
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 
 from models import db, WorkoutModel, UserModel, ReviewModel, UserWorkoutModel
 
 app = Flask(__name__)
+CORS(app)
 
 api = Api(app)
 bcrypt = Bcrypt(app)
@@ -43,5 +45,5 @@ api.add_resource(Announcement , '/announcements','/announcements/<int:id>')
 
 
 if __name__ == '__main__':
-    app.run(port = 5555, debug=True)
+    app.run(port = 5000, debug=True)
     

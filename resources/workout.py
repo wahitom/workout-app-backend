@@ -71,7 +71,12 @@ class Workout(Resource):
         else:
             return {"message":"workout not found"}
         
+
+    @jwt_required() 
     def delete(self,id):
+        if current_user['role'] != 'admin':
+            return {"message": "Unauthorized request", "status": "fail"}, 403
+        
         workout = WorkoutModel.query.get(id)
         if workout:
             try:

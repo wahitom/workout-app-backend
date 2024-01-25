@@ -1,6 +1,7 @@
 
 from flask_restful import Resource , reqparse ,fields, marshal , marshal_with
 from models import AnnouncementModel ,db
+from flask_jwt_extended import current_user, jwt_required
 
 
 response_fields = {
@@ -32,8 +33,11 @@ class Announcement(Resource):
             announcements = AnnouncementModel.query.all()
             return  marshal(announcements, response_fields)
 
-
+   @jwt_required()
    def post(self):
+        # print(current_user)
+       if current_user['role'] != 'admin':
+            return {"message": "Unauthorized request", "status": "fail"}, 403
        data = Announcement.anouncement_parse.parse_args()
 
 
@@ -67,8 +71,12 @@ class Announcement(Resource):
                 return {"message":"unable to be update announcement"}
         else:
             return {"message":"announcement not found"}
-       
+        
+   @jwt_required() 
    def delete(self,id):
+        if current_user['role'] != 'admin':
+            return {"message": "Unauthorized request", "status": "fail"}, 403
+        
         announcement = AnnouncementModel.query.get(id)
         if announcement:
             try:
