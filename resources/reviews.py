@@ -44,8 +44,8 @@ class Review(Resource):
         if workout and user:
             # Create the ReviewModel instance with the associated objects
             review = ReviewModel(
-                workouts_id=workout,
-                user_id=user,
+                workouts_id=workout.id,  # Set the ID instead of the object
+                user_id=user.id,  # Set the ID instead of the object
                 ratings=data['ratings'],
                 body=data['body']
             )
@@ -59,6 +59,7 @@ class Review(Resource):
                 return {"message": "unable to create review"}
         else:
             return {"message": "workout or user not found"}
+
 
         
         
