@@ -4,6 +4,7 @@ from .workout import workout_fields
 from .user import user_fields
 from models import UserModel, WorkoutModel
 
+# Define fields for marshaling responses
 review_fields = {
     "id": fields.Integer,
     "workout": fields.Nested(workout_fields),
@@ -14,6 +15,8 @@ review_fields = {
     
 }
     # who can make a review ?
+
+# Request parser for handling review data in requests
 class Review(Resource):
     review_parser = reqparse.RequestParser()
     review_parser.add_argument('workouts_id', required = True,type=int,help="Workouts id is required" )
@@ -22,6 +25,7 @@ class Review(Resource):
     review_parser.add_argument('body', required = True,help="Body is required" )
     #review_parser.add_argument('status', required = True,help="Description is required" )
 
+    #Retrieve review(s) based on the provided ID.
     @marshal_with(review_fields)
     def get(self,id=None):
         if id:
@@ -33,6 +37,7 @@ class Review(Resource):
    
         
     #  added this to deal with the relationships between users and workouts and id 
+    #Create a new review.
     def post(self):
         data = Review.review_parser.parse_args()
 
@@ -62,7 +67,7 @@ class Review(Resource):
 
 
         
-        
+     #Update review information based on the provided ID.   
     @marshal_with(review_fields)
     def patch(self,id):
         data = Review.review_parser.parse_args()
@@ -81,6 +86,7 @@ class Review(Resource):
         else:
             return {"message":"review not found"}
         
+    #Delete a review based on the provided ID.
     def delete(self,id):
         review = ReviewModel.query.get(id)
         if review:

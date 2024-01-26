@@ -2,6 +2,7 @@ from models import WorkoutModel, db
 from flask_restful import Resource,fields, marshal, reqparse, marshal
 from flask_jwt_extended import current_user, jwt_required
 
+# Define fields for marshaling
 workout_fields = {
     "id" : fields.Integer,
     "users_id" : fields.Integer,
@@ -13,6 +14,7 @@ workout_fields = {
     "created_at" : fields.DateTime
     
 }
+# Request parser for handling input validation
 # jwt_required()
 class Workout(Resource):
     workout_parser = reqparse.RequestParser()
@@ -24,17 +26,20 @@ class Workout(Resource):
     workout_parser.add_argument('time', required = True,help="Time is required" )
     workout_parser.add_argument('price', required = True,help="price is required" )
    
+    # GET method to retrieve workout(s)
     def get(self,id=None):
         if id:
+            # Retrieve a specific workout by ID
             workout = WorkoutModel.query.filter_by(id=id).first()
             if workout == None:
                return {"message":"workout not found"}, 404
             return marshal(workout, workout_fields)
         else:
+            # Retrieve all workouts
             workouts = WorkoutModel.query.all()
             return  marshal(workouts, workout_fields)
-
-    @jwt_required()  
+    
+    # POST method to create a new workout    
     def post(self):
         # print(current_user)
         if current_user['role'] != 'admin':
@@ -42,26 +47,31 @@ class Workout(Resource):
         
         data = Workout.workout_parser.parse_args()
 
+        # Create a new workout instance
         workout = WorkoutModel(**data)
 
 
         try:
+            # Add the workout to the database and commit the changes
             db.session.add(workout)
             db.session.commit()
 
             return {"message":"Workout created successfully"}
         except:
             return {"message" : "unable to create workout"}
-        
-
+    
+    # PATCH method to update a workout by ID    
+    @marshal_with(workout_fields)
     def patch(self,id):
         data = Workout.workout_parser.parse_args()
         workout = WorkoutModel.query.get(id)
 
+# Update the workout attributes based on the provided data
         if workout:
             for key,value in data.items():
                 setattr(workout,key,value)
             try:
+                # Commit the changes to the database
                 db.session.commit()
 
                 return {"message":"workout updated successfully"}
@@ -71,8 +81,6 @@ class Workout(Resource):
         else:
             return {"message":"workout not found"}
         
-
-    @jwt_required() 
     def delete(self,id):
         if current_user['role'] != 'admin':
             return {"message": "Unauthorized request", "status": "fail"}, 403
@@ -80,6 +88,7 @@ class Workout(Resource):
         workout = WorkoutModel.query.get(id)
         if workout:
             try:
+                # Delete the workout from the database and commit the changes
                 db.session.delete(workout)
                 db.session.commit()
 

@@ -4,7 +4,7 @@ from flask_bcrypt import check_password_hash
 
 db = SQLAlchemy()
 
-
+# User model for storing user information
 class UserModel(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -38,14 +38,15 @@ class UserModel(db.Model):
     #         "created_at" : self.created_at
     #     }]
 
+    # Check if the provided password matches the stored hashed password
     def check_password(self, user_password):
         return check_password_hash(self.password,user_password)
     
-    #  logic for the access token 
+    # Return a JSON representation of the user for token creation 
     def to_json(self):
         return {"id": self.id, "role": self.role}
       
-
+# Workout model for storing workout information
 class WorkoutModel(db.Model):
     __tablename__ = 'workouts'
     id = db.Column(db.Integer, primary_key=True)
@@ -65,7 +66,7 @@ class WorkoutModel(db.Model):
     users = db.relationship('UserWorkoutModel', back_populates='workout')
    
 
-
+# Review model for storing workout reviews
 class ReviewModel(db.Model):
     __tablename__ = 'reviews'
     id = db.Column(db.Integer, primary_key=True)
@@ -81,6 +82,7 @@ class ReviewModel(db.Model):
     user = db.relationship('UserModel', backref='reviews')  # Updated relationship name
     
 
+# Model for storing user and workout associations
 class UserWorkoutModel(db.Model):
     __tablename__ = 'user_workouts'
     id = db.Column(db.Integer, primary_key=True)
@@ -92,6 +94,7 @@ class UserWorkoutModel(db.Model):
     user = db.relationship('UserModel', back_populates='workouts')
     workout = db.relationship('WorkoutModel', back_populates='users')
     
+# Model for storing announcements
 class AnnouncementModel(db.Model):
     __tablename__ = 'announcements'
 
