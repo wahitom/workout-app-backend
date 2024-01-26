@@ -86,24 +86,23 @@ class User(Resource):
         except:
             return #{"message": "Unable to create user"}
 
-    
-    # @marshal_with(user_fields)
-    # def patch(self,id):
-    #     data =User.user_parser.parse_args()
-    #     user = UserModel.query.get(id)
+       
+    def patch(self,id):
+        data =User.user_parser.parse_args()
+        user = UserModel.query.get(id)
 
-    #     if user:
-    #         for key,value in data.items():
-    #             setattr(user,key,value)
-    #         try:
-    #             db.session.commit()
+        if user:
+            for key,value in data.items():
+                setattr(user,key,value)
+            try:
+                db.session.commit()
 
-    #             return {"message":"user updated successfully"}
-    #         except:
-    #             return {"message":"user unable to be updated"}
+                return {"message":"user updated successfully"}
+            except:
+                return {"message":"user unable to be updated"}
             
-    #     else:
-    #         return {"message":"user not found"}
+        else:
+            return {"message":"user not found"}
         
     # def delete(self,id):
     #     user = UserModel.query.get(id)

@@ -8,12 +8,14 @@ from resources.user_workouts import UserWorkout
 from resources.announcements import Announcement
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
+
 from flask_cors import CORS
 
 from models import db, WorkoutModel, UserModel, ReviewModel, UserWorkoutModel
 
 app = Flask(__name__)
 CORS(app)
+
 
 api = Api(app)
 bcrypt = Bcrypt(app)
