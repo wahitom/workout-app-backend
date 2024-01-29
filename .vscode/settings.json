@@ -3,14 +3,8 @@
     {
       "previewLimit": 50,
       "driver": "SQLite",
-      "name": "data.db",
-      "database": "\\\\wsl.localhost\\Ubuntu\\home\\joy\\Development\\code\\phase-4\\workout-app-backend\\instance\\data.db"
-    },
-    {
-      "previewLimit": 50,
-      "driver": "SQLite",
-      "name": "db",
-      "database": "${workspaceFolder:workout-app-backend}/instance/data.db"
+      "name": "database.db",
+      "database": "${workspaceFolder:workout-app-backend}/instance/database.db"
     }
   ],
   "sqltools.useNodeRuntime": true
