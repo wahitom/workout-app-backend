@@ -1,84 +1,75 @@
+from flask_restful import Resource, fields, marshal_with, reqparse
+from models import db , Anouncement
 
-from flask_restful import Resource , reqparse ,fields, marshal , marshal_with
-from models import AnnouncementModel ,db
-
-# Define fields for marshaling responses
-response_fields = {
-   "id":fields.Integer,
-   "title": fields.String,
-   "image":fields.String,
-   "description":fields.String,
-   "date":fields.String
+announcement_fields = {
+    "id": fields.Integer,
+    "title": fields.String,
+    "image": fields.String,
+    "description": fields.String,
 }
 
-# Request parser for handling announcement data in requests
-class Announcement(Resource):
-   
-   anouncement_parse =  reqparse.RequestParser()
-   anouncement_parse.add_argument('title', required = True,type=str,help="title is required" )
-   anouncement_parse.add_argument('image', required = True,type=str,help="image is required" )
-   anouncement_parse.add_argument('description', required = True,type=str,help="description is required" )
-   anouncement_parse.add_argument('date', required = True,type=str,help="date is required" )
+class AnnouncementResource(Resource):
+    announcement_parser = reqparse.RequestParser()
+    announcement_parser.add_argument('title', type=str, help="Enter the title")
+    announcement_parser.add_argument('image', type=str, help="Enter the image URL")
+    announcement_parser.add_argument('description', type=str, help="Enter the description")
 
+    @marshal_with(announcement_fields)
+    def get(self):
+        # Fetching announcements
+        announcements = Anouncement.query.all()
+        return announcements
+    
+    #only an admin can add an announcement
+    @marshal_with(announcement_fields)
+    def post(self):
+        data = AnnouncementResource.announcement_parser.parse_args()
 
- #Retrieve announcement(s) based on the provided ID.
-   def get(self,id=None):
-        if id:
-            announcement = AnnouncementModel.query.filter_by(id=id).first()
-            if announcement == None:
-               return {"message":"workout not found"}, 404
-            return marshal(announcement, response_fields)
-        else:
-            announcements = AnnouncementModel.query.all()
-            return  marshal(announcements, response_fields)
+        new_announcement = Anouncement(
+            title=data['title'],
+            image=data['image'],
+            description=data['description']
+        )
 
-    # Create a new announcement.
-   def post(self):
-       data = Announcement.anouncement_parse.parse_args()
-
-
-       announcement = AnnouncementModel(**data)
-
-
-       try:
-            db.session.add(announcement)
+        try:
+            db.session.add(new_announcement)
             db.session.commit()
+            return {"message": "Announcement created successfully", "status": "success"}, 201
+        except:
+            return {"message": "Unable to create announcement", "status": "fail"}, 500
 
+    #only an admin can update an announcement
+    @marshal_with(announcement_fields)
+    def put(self,id):
+        data = AnnouncementResource.announcement_parser.parse_args()
+        
+        announcement = Anouncement.query.get(id)
 
-            return {"message":"announcement created successfully"}
-       except:
-            return {"message" : "unable to create Announcement"}
-       
-   #Update announcement information based on the provided ID.
-   def patch(self,id):
-        data = Announcement.anouncement_parse.parse_args()
-        announcement = AnnouncementModel.query.get(id)
+        if not announcement:
+            return {"message": "Announcement not found", "status": "fail"}, 404
 
+        # updating
+        announcement.title = data['title']
+        announcement.image = data['image']
+        announcement.description = data['description']
 
-        if announcement:
-            for key,value in data.items():
-                setattr(announcement,key,value)
-            try:
-                db.session.commit()
+        try:
+            db.session.commit()
+            return {"message": "Announcement updated successfully", "status": "success"}, 200
+        except:
+            return {"message": "Unable to update announcement", "status": "fail"}, 500
 
+    #only an admin can update an announcement
+    def delete(self,id):
+        # deleting announcement
+        announcement = Anouncement.query.get(id)
 
-                return {"message":"announcement updated successfully"}
-            except:
-                return {"message":"unable to be update announcement"}
-        else:
-            return {"message":"announcement not found"}
-     
-     #Delete an announcement based on the provided ID.  
-   def delete(self,id):
-        announcement = AnnouncementModel.query.get(id)
-        if announcement:
-            try:
-                db.session.delete(announcement)
-                db.session.commit()
+        if not announcement:
+            return {"message": "Announcement not found", "status": "fail"}, 404
 
-
-                return {"message":"announcement deleted"}
-            except:
-                return {"message":"announcement unable to be deleted"}
-        else:
-            return {"message":"announcement not found"}
+        try:
+            db.session.delete(announcement)
+            db.session.commit()
+            return {"message": "Announcement deleted successfully", "status": "success"}, 200
+        except :
+            return {"message": "Unable to delete announcement", "status": "fail"}, 500

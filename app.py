@@ -1,53 +1,51 @@
 from flask import Flask
 from flask_migrate import Migrate 
-from flask_restful import Api, Resource
-from resources.user import User,Login
-from resources.workout import Workout
-from resources.reviews import Review
-from resources.user_workouts import UserWorkout
-from resources.announcements import Announcement
+from flask_restful import Api
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
-from flask_jwt_extended import JWTManager
+from flask_cors import CORS
+from datetime import timedelta
 
-from models import db, WorkoutModel, UserModel, ReviewModel, UserWorkoutModel
+from models import db , UserModel
+from resources.users import User,Login
+from resources.workouts import Workout
+from resources.userworkouts import UserWorkout #,BookWorkoutResource , BookedWorkoutsResource
+from resources.profile import ProfileResource
+from resources.review import ReviewResource
+from resources.announcements import AnnouncementResource
 
-app = Flask(__name__)
-
-# Initialize Flask-RESTful API
+app=Flask(__name__)
 api = Api(app)
-
-# Initialize Flask-Bcrypt for password hashing
 bcrypt = Bcrypt(app)
-
-# Initialize Flask-JWT-Extended for JSON Web Tokens
 jwt = JWTManager(app)
+CORS(app)
 
-# Set SQLite database URI and configure JWT secret key
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+#using the sqlite database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 
-app.config["JWT_SECRET_KEY"] = "super-secret" 
+#setting up jwt
+app.config["JWT_SECRET_KEY"] = "super-secret"  # we should remember to change this
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=30)
 
-# Initialize Flask-Migrate for database migrations
-migrations = Migrate(app,db)
-
-# Initialize Flask-SQLAlchemy
+#migrations set-up
 db.init_app(app)
+migrations = Migrate(app ,db)
 
-
-jwt = JWTManager(app)
-
-# Add resources (endpoints) to the API
 api.add_resource(User, '/users', '/users/<int:id>')
-api.add_resource(Workout, '/workouts', '/workouts/<int:id>')
-api.add_resource(Review, '/reviews', '/reviews/<int:id>')
 api.add_resource(UserWorkout, '/userworkouts', '/userworkouts/<int:id>')
 api.add_resource(Login, '/login')
-api.add_resource(Announcement , '/announcements','/announcements/<int:id>')
+api.add_resource(Workout, '/workouts', '/workouts/<int:id>')
+api.add_resource(ProfileResource, '/profile')
+api.add_resource(ReviewResource, '/reviews','/reviews/<int:id>')
+api.add_resource(AnnouncementResource, '/announcements')
+#api.add_resource(BookWorkoutResource, '/book-workout')
+#api.add_resource(BookedWorkoutsResource, '/booked-workouts')
 
+@jwt.user_lookup_loader
+def user_lookup_callback(_jwt_header, jwt_data):
+    identity = jwt_data["sub"]
+    return UserModel.query.filter_by(id=identity).one_or_none().to_json()
 
-# Run the Flask application on port 5555 with debug mode enabled
+   
 if __name__ == '__main__':
-    app.run(port = 5555, debug=True)
-    
+    app.run(port = 5000, debug=True)
